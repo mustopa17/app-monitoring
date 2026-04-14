@@ -8,4 +8,5 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::get('/monitors', [\App\Http\Controllers\Api\MonitorController::class, 'index']);
+Route::get('/logs', [\App\Http\Controllers\Api\MonitorLogController::class, 'index']);
 Route::post('/monitors', [\App\Http\Controllers\Api\MonitorController::class, 'store']);
