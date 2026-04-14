@@ -12,5 +12,8 @@ class Monitor extends Model
         'name',
         'url',
         'interval',
+        'status',
+        'response_time',
+        'checked_at',
     ];
 }
