@@ -9,4 +9,5 @@ Route::get('/user', function (Request $request) {
 
 Route::get('/monitors', [\App\Http\Controllers\Api\MonitorController::class, 'index']);
 Route::get('/logs', [\App\Http\Controllers\Api\MonitorLogController::class, 'index']);
+Route::get('/status', [\App\Http\Controllers\Api\StatusController::class, 'index']);
 Route::post('/monitors', [\App\Http\Controllers\Api\MonitorController::class, 'store']);
