@@ -8,6 +8,8 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::get('/monitors', [\App\Http\Controllers\Api\MonitorController::class, 'index']);
+Route::post('/monitors', [\App\Http\Controllers\Api\MonitorController::class, 'store']);
+Route::put('/monitors/{id}', [\App\Http\Controllers\Api\MonitorController::class, 'update']);
+Route::delete('/monitors/{id}', [\App\Http\Controllers\Api\MonitorController::class, 'destroy']);
 Route::get('/logs', [\App\Http\Controllers\Api\MonitorLogController::class, 'index']);
 Route::get('/status', [\App\Http\Controllers\Api\StatusController::class, 'index']);
-Route::post('/monitors', [\App\Http\Controllers\Api\MonitorController::class, 'store']);
