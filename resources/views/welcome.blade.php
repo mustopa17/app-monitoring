@@ -204,6 +204,7 @@
                                     <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Interval</th>
                                     <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Current Status</th>
                                     <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Performance</th>
+                                    <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-50">
@@ -234,6 +235,16 @@
                                         </td>
                                         <td class="px-6 py-4 text-right">
                                             <span class="font-mono text-slate-700 font-bold" x-text="m.response_time + ' ms'"></span>
+                                        </td>
+                                        <td class="px-6 py-4 text-center">
+                                            <div class="flex items-center justify-center space-x-2">
+                                                <button @click="openEditModal(m)" class="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button @click="deleteMonitor(m.id)" class="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors" title="Delete">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 </template>
@@ -326,6 +337,47 @@
         </div>
     </div>
 
+    <!-- Edit Monitor Modal -->
+    <div x-show="showEditModal" class="fixed inset-0 z-[100] overflow-y-auto" x-cloak x-transition>
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div @click="showEditModal = false" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+            
+            <div class="relative bg-white rounded-[2.5rem] w-full max-w-md p-10 shadow-2xl">
+                <h3 class="text-2xl font-bold text-slate-800 mb-2">Edit Monitor</h3>
+                <p class="text-slate-500 text-sm mb-8">Update the monitoring configuration for this target.</p>
+                
+                <form @submit.prevent="updateMonitor()" class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Display Name</label>
+                        <input x-model="editTarget.name" type="text" placeholder="e.g. My Portfolio" class="w-full px-5 py-3 rounded-2xl bg-slate-50 border border-slate-200 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all font-medium transition-all" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Target URL</label>
+                        <input x-model="editTarget.url" type="url" placeholder="https://example.com" class="w-full px-5 py-3 rounded-2xl bg-slate-50 border border-slate-200 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all font-medium transition-all" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Check Interval (Minutes)</label>
+                        <select x-model="editTarget.interval" class="w-full px-5 py-3 rounded-2xl bg-slate-50 border border-slate-200 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all font-bold transition-all">
+                            <option value="1">Every Minute</option>
+                            <option value="5">Every 5 Minutes</option>
+                            <option value="15">Every 15 Minutes</option>
+                            <option value="60">Hourly</option>
+                        </select>
+                    </div>
+                    <button type="submit" :disabled="loading" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl shadow-xl shadow-blue-200 transition-all active:scale-95 flex items-center justify-center space-x-2">
+                        <template x-if="!loading">
+                            <span>Save Changes</span>
+                        </template>
+                        <template x-if="loading">
+                            <i class="fas fa-circle-notch animate-spin"></i>
+                        </template>
+                    </button>
+                    <button type="button" @click="showEditModal = false" class="w-full text-slate-400 text-sm font-bold py-2">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Core App Script -->
     <script>
         function app() {
@@ -338,7 +390,9 @@
                 logs: [],
                 stats: { total: 0, up: 0, down: 0, avgResponse: 0 },
                 showAddModal: false,
+                showEditModal: false,
                 newTarget: { name: '', url: '', interval: 5 },
+                editTarget: { id: null, name: '', url: '', interval: 5 },
 
                 async init() {
                     const savedPage = localStorage.getItem('lastPage');
@@ -431,6 +485,71 @@
                     if (!dateString) return 'Never';
                     const date = new Date(dateString);
                     return date.toLocaleString();
+                },
+
+                openEditModal(monitor) {
+                    this.editTarget = {
+                        id: monitor.id,
+                        name: monitor.name,
+                        url: monitor.url,
+                        interval: monitor.interval.includes('menit') ? parseInt(monitor.interval) : monitor.interval
+                    };
+                    this.showEditModal = true;
+                },
+
+                async updateMonitor() {
+                    if (!this.editTarget.name || !this.editTarget.url) return alert("Please fill all fields");
+                    
+                    this.loading = true;
+                    try {
+                        const res = await fetch(`/api/monitors/${this.editTarget.id}`, {
+                            method: 'PUT',
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify(this.editTarget)
+                        });
+                        
+                        if (res.ok) {
+                            this.showEditModal = false;
+                            await this.refreshData();
+                        } else {
+                            const err = await res.json();
+                            alert("Error: " + (err.error || "Failed to update target"));
+                        }
+                    } catch (e) {
+                        alert("Network error occurred");
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                async deleteMonitor(id) {
+                    if (!confirm('Are you sure you want to delete this monitoring target? This action cannot be undone.')) return;
+                    
+                    this.loading = true;
+                    try {
+                        const res = await fetch(`/api/monitors/${id}`, {
+                            method: 'DELETE',
+                            headers: { 
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
+                            }
+                        });
+                        
+                        if (res.ok) {
+                            await this.refreshData();
+                        } else {
+                            const err = await res.json();
+                            alert("Error: " + (err.error || "Failed to delete target"));
+                        }
+                    } catch (e) {
+                        alert("Network error occurred");
+                    } finally {
+                        this.loading = false;
+                    }
                 }
             }
         }
