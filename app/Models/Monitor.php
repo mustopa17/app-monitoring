@@ -16,4 +16,8 @@ class Monitor extends Model
         'response_time',
         'checked_at',
     ];
+
+    protected $casts = [
+        'checked_at' => 'datetime',
+    ];
 }

@@ -165,7 +165,7 @@
                                             <i :class="log.status === 'UP' ? 'fas fa-check-circle' : 'fas fa-times-circle'"></i>
                                         </div>
                                         <div>
-                                            <p class="text-sm font-semibold text-slate-800" x-text="'Monitor #' + log.monitor_id + ' is ' + log.status"></p>
+                                            <p class="text-sm font-semibold text-slate-800" x-text="log.monitor_name + ' is ' + log.status"></p>
                                             <p class="text-[10px] text-slate-400 font-medium" x-text="formatDate(log.checked_at)"></p>
                                             <p x-if="log.error_message" class="text-[10px] text-rose-400 mt-1" x-text="log.error_message"></p>
                                         </div>
@@ -257,8 +257,21 @@
             <!-- Logs Page -->
             <template x-if="activePage === 'logs'">
                 <div class="space-y-6 animate-fadeIn">
-                    <div class="flex justify-between items-center">
-                        <h3 class="text-2xl font-bold text-slate-800">Detailed Activity Stream</h3>
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                            <h3 class="text-2xl font-bold text-slate-800">Detailed Activity Stream</h3>
+                            <p class="text-slate-500">View and manage the full history of monitoring checks.</p>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <a href="/api/logs/export" class="bg-blue-50 text-blue-600 hover:bg-blue-100 px-4 py-2 rounded-xl font-bold text-sm transition-all border border-blue-100 flex items-center space-x-2">
+                                <i class="fas fa-file-csv"></i>
+                                <span>Export CSV</span>
+                            </a>
+                            <button @click="clearLogs()" class="bg-rose-50 text-rose-600 hover:bg-rose-100 px-4 py-2 rounded-xl font-bold text-sm transition-all border border-rose-100 flex items-center space-x-2">
+                                <i class="fas fa-trash-sweep"></i>
+                                <span>Clear History</span>
+                            </button>
+                        </div>
                     </div>
 
                     <div class="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden overflow-x-auto">
@@ -266,18 +279,19 @@
                             <thead class="bg-slate-50 border-b border-slate-100">
                                 <tr>
                                     <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Timestamp</th>
-                                    <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase text-center">Monitor ID</th>
+                                    <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase text-center">Website Name</th>
                                     <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase text-center">Status</th>
                                     <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase text-center">Response</th>
                                     <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase text-center">Code</th>
                                     <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Message</th>
+                                    <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-50">
                                 <template x-for="log in logs" :key="log.id">
                                     <tr class="hover:bg-slate-50/50">
                                         <td class="px-6 py-4 text-sm font-medium text-slate-600" x-text="formatDate(log.checked_at)"></td>
-                                        <td class="px-6 py-4 text-center text-sm font-bold text-slate-700" x-text="'#'+log.monitor_id"></td>
+                                        <td class="px-6 py-4 text-center text-sm font-bold text-slate-700" x-text="log.monitor_name"></td>
                                         <td class="px-6 py-4 text-center">
                                             <span :class="log.status === 'UP' ? 'text-emerald-600 bg-emerald-50' : 'text-rose-600 bg-rose-50'" class="px-2 py-0.5 rounded text-[10px] font-bold" x-text="log.status"></span>
                                         </td>
@@ -285,7 +299,12 @@
                                         <td class="px-6 py-4 text-center">
                                             <span class="text-xs font-bold text-slate-500" x-text="log.status_code || '-'"></span>
                                         </td>
-                                        <td class="px-6 py-4 text-sm text-slate-500" x-text="log.error_message || 'OK'"></td>
+                                        <td class="px-6 py-4 text-sm text-slate-500 truncate max-w-[200px]" :title="log.error_message" x-text="log.error_message || 'OK'"></td>
+                                        <td class="px-6 py-4 text-center">
+                                            <button @click="deleteLog(log.id)" class="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors" title="Delete Log Entry">
+                                                <i class="fas fa-trash-alt text-xs"></i>
+                                            </button>
+                                        </td>
                                     </tr>
                                 </template>
                             </tbody>
@@ -417,8 +436,8 @@
                     this.loading = true;
                     try {
                         const [monitorsRes, logsRes] = await Promise.all([
-                            fetch('/api/monitors'),
-                            fetch('/api/logs')
+                            fetch('api/monitors'),
+                            fetch('api/logs')
                         ]);
                         
                         const monitorsData = await monitorsRes.json();
@@ -456,7 +475,7 @@
                     
                     this.loading = true;
                     try {
-                        const res = await fetch('/api/monitors', {
+                        const res = await fetch('api/monitors', {
                             method: 'POST',
                             headers: { 
                                 'Content-Type': 'application/json',
@@ -472,7 +491,11 @@
                             this.navigate('monitors');
                         } else {
                             const err = await res.json();
-                            alert("Error: " + (err.message || "Failed to add target"));
+                            let msg = err.message || "Failed to add target";
+                            if (err.errors) {
+                                msg = Object.values(err.errors).flat().join('\n');
+                            }
+                            alert("Error: " + msg);
                         }
                     } catch (e) {
                         alert("Network error occurred");
@@ -502,7 +525,7 @@
                     
                     this.loading = true;
                     try {
-                        const res = await fetch(`/api/monitors/${this.editTarget.id}`, {
+                        const res = await fetch(`api/monitors/${this.editTarget.id}`, {
                             method: 'PUT',
                             headers: { 
                                 'Content-Type': 'application/json',
@@ -517,7 +540,11 @@
                             await this.refreshData();
                         } else {
                             const err = await res.json();
-                            alert("Error: " + (err.error || "Failed to update target"));
+                            let msg = err.error || err.message || "Failed to update target";
+                            if (err.errors) {
+                                msg = Object.values(err.errors).flat().join('\n');
+                            }
+                            alert("Error: " + msg);
                         }
                     } catch (e) {
                         alert("Network error occurred");
@@ -531,7 +558,7 @@
                     
                     this.loading = true;
                     try {
-                        const res = await fetch(`/api/monitors/${id}`, {
+                        const res = await fetch(`api/monitors/${id}`, {
                             method: 'DELETE',
                             headers: { 
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -544,6 +571,62 @@
                         } else {
                             const err = await res.json();
                             alert("Error: " + (err.error || "Failed to delete target"));
+                        }
+                    } catch (e) {
+                        alert("Network error occurred");
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                async deleteLog(id) {
+                    if (!confirm('Are you sure you want to delete this log entry?')) return;
+                    
+                    this.loading = true;
+                    try {
+                        const res = await fetch(`api/logs/${id}`, {
+                            method: 'DELETE',
+                            headers: { 
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
+                            }
+                        });
+                        
+                        if (res.ok) {
+                            await this.refreshData();
+                        } else {
+                            const err = await res.json();
+                            alert("Error: " + (err.message || "Failed to delete log"));
+                        }
+                    } catch (e) {
+                        alert("Network error occurred");
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                async clearLogs() {
+                    const confirm1 = confirm('WARNING: You are about to DELETE ALL activity history.');
+                    if (!confirm1) return;
+                    const confirm2 = confirm('Are you REALLY sure? This action cannot be undone.');
+                    if (!confirm2) return;
+                    
+                    this.loading = true;
+                    try {
+                        const res = await fetch(`api/logs/clear`, {
+                            method: 'DELETE',
+                            headers: { 
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
+                            }
+                        });
+                        
+                        if (res.ok) {
+                            await this.refreshData();
+                            alert("History cleared successfully");
+                        } else {
+                            const err = await res.json();
+                            alert("Error: " + (err.message || "Failed to clear history"));
                         }
                     } catch (e) {
                         alert("Network error occurred");

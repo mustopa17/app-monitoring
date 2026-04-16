@@ -3,34 +3,35 @@ buatkan issue.md yang berisi perencanaan untuk nanti di implementasikan oleh jun
 Isi dari planning nya adalah sebagai berikut :
 
 
+buat tabel monitors:
+id integer auto increment
+name varchar 255 not null
+url varchar 255 not null
+interval varchar 255 not null
+created_at timestamp default current_timestamp
 
+buatkan API untuk TAMBAH MONITOR    URL Baru
 
-buatkan API untuk GET DATA status     
+Endpoint : POST /api/monitors
 
-Endpoint : GET   /api/status
+Request Body :
 
-
+{
+"name" : "Google",
+"url" : "https://google.com",
+"interval" : "1 menit"
+}
 
 Response Body (Succees) :
 
 {
-     
-  "data": 
-    {
-      "name": "Google",
-      "url": "https://google.com",
-      "status": "UP",
-      "response_time": 120,
-      "checked_at": "2026-04-14 10:00:00"
-    }
-  
+"data" : "OK"
 }
-
 
 Response Body (Error) :
 
 {
-"error" : "Data tidak ditemukan"
+"error" : "Tidak boleh kosong"
 }
 
 Ikuti struktur MVC dengan baik

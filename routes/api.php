@@ -12,4 +12,7 @@ Route::post('/monitors', [\App\Http\Controllers\Api\MonitorController::class, 's
 Route::put('/monitors/{id}', [\App\Http\Controllers\Api\MonitorController::class, 'update']);
 Route::delete('/monitors/{id}', [\App\Http\Controllers\Api\MonitorController::class, 'destroy']);
 Route::get('/logs', [\App\Http\Controllers\Api\MonitorLogController::class, 'index']);
+Route::get('/logs/export', [\App\Http\Controllers\Api\MonitorLogController::class, 'export']);
+Route::delete('/logs/clear', [\App\Http\Controllers\Api\MonitorLogController::class, 'clearAll']);
+Route::delete('/logs/{id}', [\App\Http\Controllers\Api\MonitorLogController::class, 'destroy']);
 Route::get('/status', [\App\Http\Controllers\Api\StatusController::class, 'index']);
