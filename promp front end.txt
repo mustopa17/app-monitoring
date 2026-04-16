@@ -1,0 +1,141 @@
+buatkan issue.md yang berisi perencanaan untuk nanti di implementasikan oleh junior programmer atau ai model yang lebih murah.
+
+Isi dari planning nya adalah sebagai berikut :
+
+Buatkan frontend dashboard untuk sistem monitoring website berbasis API Laravel.
+
+## 🎯 Konteks Sistem
+Backend sudah tersedia dengan API berikut:
+
+1. GET /api/monitors → daftar website yang dimonitor
+2. POST /api/monitors → tambah monitor baru
+3. GET /api/status → status real-time (UP/DOWN)
+4. GET /api/logs → histori pengecekan
+
+Backend menggunakan Laravel, response dalam JSON.
+
+---
+
+## 🎨 Teknologi Frontend
+Gunakan salah satu:
+- HTML + TailwindCSS + Vanilla JavaScript 
+## 📌 Halaman yang harus dibuat
+
+### 1. Dashboard (Home Page)
+Menampilkan:
+- Total monitors
+- Jumlah UP
+- Jumlah DOWN
+- Rata-rata response time (jika ada dari API)
+
+Ambil data dari:
+GET /api/status
+
+Tampilkan dalam bentuk card UI.
+
+---
+
+### 2. Halaman Monitor List
+Menampilkan tabel:
+- Nama website
+- URL
+- Interval
+- Status (UP/DOWN dengan warna hijau/merah)
+
+Data dari:
+GET /api/monitors
+GET /api/status (digabungkan berdasarkan monitor_id atau url)
+
+---
+
+### 3. Form Tambah Monitor
+Form input:
+- name (text)
+- url (text)
+- interval (text)
+
+Ketika submit:
+Kirim ke:
+POST /api/monitors
+
+Request body:
+{
+  "name": "",
+  "url": "",
+  "interval": ""
+}
+
+Jika sukses:
+Tampilkan alert "Monitor berhasil ditambahkan"
+Lalu refresh data list.
+
+Jika error:
+Tampilkan pesan error dari API.
+
+---
+
+### 4. Halaman Logs
+Menampilkan tabel log:
+- Monitor ID / Name
+- Status (UP/DOWN)
+- Response time
+- Status code
+- Checked at
+
+Data dari:
+GET /api/logs
+
+Tambahkan filter sederhana:
+- filter status (UP / DOWN)
+- search nama monitor
+
+---
+
+## ⚙️ Requirement UI/UX
+
+- Gunakan layout dashboard modern
+- Sidebar (Dashboard, Monitors, Logs)
+- Responsive (mobile friendly)
+- Gunakan warna:
+  - Green = UP
+  - Red = DOWN
+  - Gray = inactive/loading
+- Loading state saat fetch API
+- Error handling jika API gagal
+
+---
+
+## 🔄 Logic Penting
+
+- Semua data diambil dari API Laravel (tidak hardcode)
+- Gunakan fetch() atau axios
+- Update data tanpa reload halaman (AJAX style)
+- Status harus real-time (refresh tiap 10–30 detik)
+
+---
+
+## 📊 Bonus (jika mampu)
+
+- Auto refresh status setiap 10 detik
+- Chart uptime (gunakan Chart.js)
+- Toast notification saat status berubah
+- Highlight jika website DOWN
+
+---
+
+## 🎯 Output yang diharapkan
+
+Frontend harus:
+- Bisa menampilkan data monitoring dari backend
+- Bisa menambah monitor baru
+- Bisa melihat status real-time
+- Bisa melihat log history
+- UI sederhana tapi profesional seperti dashboard SaaS
+
+
+
+
+
+Ikuti struktur MVC dengan baik
+
+Jelaskan tahapan-tahapan yang harus dilakukan untuk mengimplementasikan fitur ini, anggap nanti yang mengimplementasikan adalah junior programmer atau model AI yang lebih murah.

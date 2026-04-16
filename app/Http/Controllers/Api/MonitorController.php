@@ -28,17 +28,13 @@ class MonitorController extends Controller
 
     public function store(Request $request)
     {
-        if (!$request->name || !$request->url || !$request->interval) {
-            return response()->json([
-                'error' => 'Tidak boleh kosong'
-            ], 422);
-        }
-
-        \App\Models\Monitor::create([
-            'name' => $request->name,
-            'url' => $request->url,
-            'interval' => $request->interval,
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'url' => 'required|url|unique:monitors,url',
+            'interval' => 'required|integer|min:1',
         ]);
+
+        \App\Models\Monitor::create($validated);
 
         return response()->json([
             'data' => 'OK'
@@ -55,11 +51,13 @@ class MonitorController extends Controller
             ], 404);
         }
 
-        $monitor->update([
-            'name' => $request->name ?? $monitor->name,
-            'url' => $request->url ?? $monitor->url,
-            'interval' => $request->interval ?? $monitor->interval,
+        $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'url' => 'sometimes|required|url|unique:monitors,url,' . $id,
+            'interval' => 'sometimes|required|integer|min:1',
         ]);
+
+        $monitor->update($validated);
 
         return response()->json([
             'data' => [
