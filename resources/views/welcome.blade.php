@@ -331,7 +331,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Target URL</label>
-                        <input x-model="newTarget.url" type="url" placeholder="https://example.com" class="w-full px-5 py-3 rounded-2xl bg-slate-50 border border-slate-200 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all font-medium transition-all" required>
+                        <input x-model="newTarget.url" type="text" placeholder="https://example.com" class="w-full px-5 py-3 rounded-2xl bg-slate-50 border border-slate-200 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all font-medium transition-all" required>
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Check Interval (Minutes)</label>
@@ -372,7 +372,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Target URL</label>
-                        <input x-model="editTarget.url" type="url" placeholder="https://example.com" class="w-full px-5 py-3 rounded-2xl bg-slate-50 border border-slate-200 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all font-medium transition-all" required>
+                        <input x-model="editTarget.url" type="text" placeholder="https://example.com" class="w-full px-5 py-3 rounded-2xl bg-slate-50 border border-slate-200 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all font-medium transition-all" required>
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Check Interval (Minutes)</label>

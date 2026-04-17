@@ -28,6 +28,13 @@ class MonitorController extends Controller
 
     public function store(Request $request)
     {
+        if ($request->has('url')) {
+            $url = $request->input('url');
+            if ($url && !preg_match("~^(?:f|ht)tps?://~i", $url)) {
+                $request->merge(['url' => 'http://' . $url]);
+            }
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'url' => 'required|url|unique:monitors,url',
@@ -49,6 +56,13 @@ class MonitorController extends Controller
             return response()->json([
                 'error' => 'Data tidak ditemukan'
             ], 404);
+        }
+
+        if ($request->has('url')) {
+            $url = $request->input('url');
+            if ($url && !preg_match("~^(?:f|ht)tps?://~i", $url)) {
+                $request->merge(['url' => 'http://' . $url]);
+            }
         }
 
         $validated = $request->validate([
