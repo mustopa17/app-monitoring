@@ -5,32 +5,24 @@ Isi dari planning nya adalah sebagai berikut :
 
 
 
-buatkan API untuk GET DATA status     
+buatkan API untuk Lihat detail users    
 
-Endpoint : GET   /api/status
-
+Endpoint : GET   /api/users/{id}
 
 
 Response Body (Succees) :
 
 {
-     
-  "data": 
-    {
-      "name": "Google",
-      "url": "https://google.com",
-      "status": "UP",
-      "response_time": 120,
-      "checked_at": "2026-04-14 10:00:00"
-    }
-  
+"nama" : "Nama user",
+"email" : "Email user",
+"role" : "user"
 }
 
 
 Response Body (Error) :
 
 {
-"error" : "Data tidak ditemukan"
+"error" : "Data tidak ditemukan"  
 }
 
 Ikuti struktur MVC dengan baik

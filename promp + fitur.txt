@@ -3,8 +3,9 @@ buatkan issue.md yang berisi perencanaan untuk nanti di implementasikan oleh jun
 Isi dari planning nya adalah sebagai berikut :
 
 
-BUAT AGAR Status	Response	Code	Message
 
-DAN DI SIMPAN KE DATABASE table monitor_log setiap interval yang di tentukan
+di welcome.blade.php 
+tambahkan menu dashboard
+
 
 Jelaskan tahapan-tahapan yang harus dilakukan untuk mengimplementasikan fitur ini, anggap nanti yang mengimplementasikan adalah junior programmer atau model AI yang lebih murah.

@@ -1,0 +1,44 @@
+
+buatkan issue.md yang berisi perencanaan untuk nanti di implementasikan oleh junior programmer atau ai model yang lebih murah.
+
+Isi dari planning nya adalah sebagai berikut 
+
+PERBAIKAN PADA Permission Permssion
+
+View Monitor melihat monitor / url target
+
+Create Monitor menambahkan monitor / url target
+
+Edit Monitor mengedit monitor / url target
+
+Delete Monitor menghapus monitor / url target
+
+View Logs melihat logs / riwayat monitor
+
+Export Logs ( download csv )
+
+clear logs ( hapus semua logs )
+
+add User menambahkan user
+
+delete user menghapus user
+
+edit user mengedit user
+
+add role menambahkan role
+
+delete role menghapus role
+
+edit role mengedit role
+
+
+
+
+
+
+
+
+
+
+
+Jelaskan tahapan-tahapan yang harus dilakukan untuk mengimplementasikan fitur ini, anggap nanti yang mengimplementasikan adalah junior programmer atau model AI yang lebih murah.
