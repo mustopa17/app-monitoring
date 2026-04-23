@@ -3,17 +3,17 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\Monitor;
 
 class StatusController extends Controller
 {
     public function index()
     {
-        $monitor = \App\Models\Monitor::first();
+        $monitor = Monitor::first();
 
-        if (!$monitor) {
+        if (! $monitor) {
             return response()->json([
-                'error' => 'Data tidak ditemukan'
+                'error' => 'Data tidak ditemukan',
             ], 404);
         }
 
@@ -24,7 +24,7 @@ class StatusController extends Controller
                 'status' => $monitor->status ?? 'UP',
                 'response_time' => $monitor->response_time ?? 0,
                 'checked_at' => $monitor->checked_at ?? now()->format('Y-m-d H:i:s'),
-            ]
+            ],
         ]);
     }
 }

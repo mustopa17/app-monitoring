@@ -2,7 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Monitor;
+use App\Models\MonitorLog;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Http;
 
 class CheckMonitors extends Command
 {
@@ -25,36 +28,36 @@ class CheckMonitors extends Command
      */
     public function handle()
     {
-        $monitors = \App\Models\Monitor::all();
-        $this->info("Checking " . $monitors->count() . " monitors...");
+        $monitors = Monitor::all();
+        $this->info('Checking '.$monitors->count().' monitors...');
 
         foreach ($monitors as $monitor) {
             // Check if it's time to perform the health check (precision in seconds)
             $diffSeconds = is_null($monitor->checked_at) ? null : abs(now()->diffInSeconds($monitor->checked_at));
             $due = is_null($monitor->checked_at) || $diffSeconds >= ($monitor->interval * 60);
 
-            if (!$due) {
+            if (! $due) {
                 // Optional: decrease noise in logs if desired, but for now we keep it
                 continue;
             }
 
             $this->info("Checking {$monitor->url}...");
-            
+
             $startTime = microtime(true);
             $status = 'DOWN';
             $statusCode = null;
             $errorMessage = null;
 
             try {
-                $response = \Illuminate\Support\Facades\Http::timeout(10)
+                $response = Http::timeout(10)
                     ->get($monitor->url);
-                
+
                 $statusCode = $response->status();
-                
+
                 if ($response->successful()) {
                     $status = 'UP';
                 } else {
-                    $errorMessage = "HTTP Error: " . $statusCode;
+                    $errorMessage = 'HTTP Error: '.$statusCode;
                 }
             } catch (\Exception $e) {
                 $errorMessage = $e->getMessage();
@@ -71,7 +74,7 @@ class CheckMonitors extends Command
             ]);
 
             // Create Log entry
-            \App\Models\MonitorLog::create([
+            MonitorLog::create([
                 'monitor_id' => $monitor->id,
                 'status' => $status,
                 'response_time' => $responseTime,
@@ -83,6 +86,6 @@ class CheckMonitors extends Command
             $this->line("Result: {$status} ({$responseTime}ms)");
         }
 
-        $this->info("Monitoring check complete.");
+        $this->info('Monitoring check complete.');
     }
 }
