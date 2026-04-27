@@ -65,6 +65,12 @@
     </div>
 
     <script>
+        // Check if already logged in
+        if (localStorage.getItem('auth_token')) {
+            localStorage.setItem('lastPage', 'dashboard');
+            window.location.href = '/dashboard';
+        }
+
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -94,7 +100,8 @@
                 if (response.ok) {
                     // Success: Store token and redirect
                     localStorage.setItem('auth_token', data.token);
-                    window.location.href = '/';
+                    localStorage.setItem('lastPage', 'dashboard');
+                    window.location.href = '/dashboard';
                 } else {
 
                     // Error from server

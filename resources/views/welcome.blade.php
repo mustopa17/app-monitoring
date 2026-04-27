@@ -794,8 +794,8 @@
 
                         // Ambil Monitor & Logs (Bisa diakses semua role)
                         const [monitorsRes, logsRes] = await Promise.all([
-                            fetch('api/monitors', { headers }),
-                            fetch('api/logs', { headers })
+                            fetch('/api/monitors', { headers }),
+                            fetch('/api/logs', { headers })
                         ]);
 
                         if (monitorsRes.ok) {
@@ -811,7 +811,7 @@
                         // Ambil daftar user & roles jika punya izin
                         // Ambil daftar user jika punya izin
                         if (this.hasPermission('user.view')) {
-                            const usersRes = await fetch('api/users', { headers });
+                            const usersRes = await fetch('/api/users', { headers });
                             if (usersRes.ok) {
                                 const data = await usersRes.json();
                                 this.users = data.data || [];
@@ -821,14 +821,14 @@
                         // Ambil daftar roles jika punya izin
                         if (this.hasPermission('role.view')) {
                             // Fetch roles
-                            const rolesRes = await fetch('api/roles', { headers });
+                            const rolesRes = await fetch('/api/roles', { headers });
                             if (rolesRes.ok) {
                                 const data = await rolesRes.json();
                                 this.roles = data.data || [];
                             }
 
                             // Fetch permissions
-                            const permRes = await fetch('api/permissions', { headers });
+                            const permRes = await fetch('/api/permissions', { headers });
                             if (permRes.ok) {
                                 const data = await permRes.json();
                                 this.allPermissions = data.data || [];
@@ -847,7 +847,7 @@
 
                 async fetchProfile() {
                     try {
-                        const res = await fetch('api/user', {
+                        const res = await fetch('/api/user', {
                             headers: {
                                 'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
                                 'Accept': 'application/json'
@@ -884,7 +884,7 @@
                     
                     this.loading = true;
                     try {
-                        const res = await fetch('api/monitors', {
+                        const res = await fetch('/api/monitors', {
                             method: 'POST',
                             headers: { 
                                 'Content-Type': 'application/json',
@@ -936,7 +936,7 @@
                     
                     this.loading = true;
                     try {
-                        const res = await fetch(`api/monitors/${this.editTarget.id}`, {
+                        const res = await fetch(`/api/monitors/${this.editTarget.id}`, {
                             method: 'PUT',
                             headers: { 
                                 'Content-Type': 'application/json',
@@ -970,7 +970,7 @@
                     
                     this.loading = true;
                     try {
-                        const res = await fetch(`api/monitors/${id}`, {
+                        const res = await fetch(`/api/monitors/${id}`, {
                             method: 'DELETE',
                             headers: { 
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -997,7 +997,7 @@
                     
                     this.loading = true;
                     try {
-                        const res = await fetch(`api/logs/${id}`, {
+                        const res = await fetch(`/api/logs/${id}`, {
                             method: 'DELETE',
                             headers: { 
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -1027,7 +1027,7 @@
                     
                     this.loading = true;
                     try {
-                        const res = await fetch(`api/logs/clear`, {
+                        const res = await fetch(`/api/logs/clear`, {
                             method: 'DELETE',
                             headers: { 
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -1053,7 +1053,7 @@
                 async exportLogs() {
                     this.loading = true;
                     try {
-                        const res = await fetch('api/logs/export', {
+                        const res = await fetch('/api/logs/export', {
                             headers: { 
                                 'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
                                 'Accept': 'text/csv'
@@ -1082,7 +1082,7 @@
                 async addUser() {
                     this.loading = true;
                     try {
-                        const res = await fetch('api/users', {
+                        const res = await fetch('/api/users', {
                             method: 'POST',
                             headers: { 
                                 'Content-Type': 'application/json',
@@ -1116,7 +1116,7 @@
                 async updateUser() {
                     this.loading = true;
                     try {
-                        const res = await fetch(`api/users/${this.editUserObj.id}`, {
+                        const res = await fetch(`/api/users/${this.editUserObj.id}`, {
                             method: 'PUT',
                             headers: { 
                                 'Content-Type': 'application/json',
@@ -1145,7 +1145,7 @@
                     if (!confirm('Hapus user ini?')) return;
                     this.loading = true;
                     try {
-                        const res = await fetch(`api/users/${id}`, {
+                        const res = await fetch(`/api/users/${id}`, {
                             method: 'DELETE',
                             headers: { 
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -1167,7 +1167,7 @@
                 async addRole() {
                     this.loading = true;
                     try {
-                        const res = await fetch('api/roles', {
+                        const res = await fetch('/api/roles', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -1206,7 +1206,7 @@
                 async updateRole() {
                     this.loading = true;
                     try {
-                        const res = await fetch(`api/roles/${this.editRoleObj.id}`, {
+                        const res = await fetch(`/api/roles/${this.editRoleObj.id}`, {
                             method: 'PUT',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -1246,7 +1246,7 @@
 
                     this.loading = true;
                     try {
-                        const res = await fetch(`api/roles/${role.id}`, {
+                        const res = await fetch(`/api/roles/${role.id}`, {
                             method: 'DELETE',
                             headers: {
                                 'Accept': 'application/json',
@@ -1274,7 +1274,7 @@
                     
                     this.loading = true;
                     try {
-                        await fetch('api/logout', {
+                        await fetch('/api/logout', {
                             method: 'POST',
                             headers: { 
                                 'Content-Type': 'application/json',
